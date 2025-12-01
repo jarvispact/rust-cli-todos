@@ -11,6 +11,7 @@ use list::CliCommandList;
 
 pub enum CliCommand {
     Empty,
+    Unknown,
     Help(CliCommandHelp),
     Exit,
     List(CliCommandList),
@@ -26,6 +27,10 @@ pub enum CliCommandSignal {
 impl CliCommand {
     pub fn parse(input: &str) -> CliCommand {
         let input = input.trim();
+
+        if input.is_empty() {
+            return CliCommand::Empty;
+        }
 
         if input.starts_with("help") {
             return CliCommand::Help(CliCommandHelp::parse(input[4..].trim()));
@@ -47,7 +52,7 @@ impl CliCommand {
             return CliCommand::Delete(CliCommandDelete::parse(input[6..].trim()));
         }
 
-        CliCommand::Empty
+        CliCommand::Unknown
     }
 
     pub fn handle<R: TodoRepository>(&self, repo: &mut R) -> CliCommandSignal {
@@ -73,6 +78,10 @@ impl CliCommand {
                 return CliCommandSignal::Continue;
             }
             CliCommand::Empty => {
+                return CliCommandSignal::Continue;
+            }
+            CliCommand::Unknown => {
+                println!("Unknown command. Type 'help' for a list of commands.");
                 return CliCommandSignal::Continue;
             }
         }

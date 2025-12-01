@@ -17,6 +17,15 @@ impl CliCommandList {
 
     pub fn handle<R: TodoRepository>(&self, repo: &mut R) {
         let todos = repo.list_todos(self.filter_tags.clone());
+
+        let todos = match todos {
+            Ok(todos) => todos,
+            Err(err) => {
+                println!("Error retrieving todos: {}", err);
+                return;
+            }
+        };
+
         if todos.is_empty() {
             println!("No todos found.");
             return;

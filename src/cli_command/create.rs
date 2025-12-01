@@ -23,6 +23,18 @@ impl CliCommandCreate {
     }
 
     pub fn handle<R: TodoRepository>(&self, repo: &mut R) {
-        repo.add_todo(&self.content, self.filter_tags.clone());
+        if self.content.is_empty() {
+            println!("Cannot create an empty todo.");
+            return;
+        }
+
+        let res = repo.add_todo(&self.content, self.filter_tags.clone());
+        match res {
+            Ok(_) => {}
+            Err(err) => {
+                println!("Error creating todo: {}", err);
+            }
+            
+        }
     }
 }

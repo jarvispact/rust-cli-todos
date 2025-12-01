@@ -11,6 +11,13 @@ impl CliCommandDelete {
     }
 
     pub fn handle<R: TodoRepository>(&self, repo: &mut R) {
-        repo.delete_todo(self.id);
+        let res = repo.delete_todo(self.id);
+        match res {
+            Ok(_) => {}
+            Err(err) => {
+                println!("Error deleting todo: {}", err);
+            }
+            
+        }
     }
 }

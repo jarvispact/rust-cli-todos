@@ -15,7 +15,7 @@ impl InMemoryTodoStorage {
 }
 
 impl TodoRepository for InMemoryTodoStorage {
-    fn add_todo(&mut self, content: &str, tags: Vec<String>) -> Todo {
+    fn add_todo(&mut self, content: &str, tags: Vec<String>) -> Result<Todo, String> {
         let todo = Todo {
             id: self.next_id,
             content: content.to_string(),
@@ -23,24 +23,25 @@ impl TodoRepository for InMemoryTodoStorage {
         };
         self.todos.push(todo);
         self.next_id += 1;
-        self.todos.last().unwrap().clone()
+        Ok(self.todos.last().unwrap().clone())
     }
 
-    fn list_todos(&self, filter_tags: Vec<String>) -> Vec<&Todo> {
-        self.todos
+    fn list_todos(&self, filter_tags: Vec<String>) -> Result<Vec<&Todo>, String> {
+        Ok(self
+            .todos
             .iter()
             .filter(|todo| {
                 filter_tags.is_empty() || filter_tags.iter().all(|tag| todo.tags.contains(tag))
             })
-            .collect()
+            .collect())
     }
 
-    fn delete_todo(&mut self, id: u32) -> bool {
+    fn delete_todo(&mut self, id: u32) -> Result<(), String> {
         if let Some(pos) = self.todos.iter().position(|todo| todo.id == id) {
             self.todos.remove(pos);
-            true
+            Ok(())
         } else {
-            false
+            Err("Todo not found".to_string())
         }
     }
 }

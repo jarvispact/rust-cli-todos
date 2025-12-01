@@ -24,7 +24,7 @@ impl Todo {
 }
 
 pub trait TodoRepository {
-    fn add_todo(&mut self, content: &str, tags: Vec<String>) -> Todo;
-    fn list_todos(&self, filter_tags: Vec<String>) -> Vec<&Todo>;
-    fn delete_todo(&mut self, id: u32) -> bool;
+    fn add_todo(&mut self, content: &str, tags: Vec<String>) -> Result<Todo, String>;
+    fn list_todos(&self, filter_tags: Vec<String>) -> Result<Vec<&Todo>, String>;
+    fn delete_todo(&mut self, id: u32) -> Result<(), String>;
 }
